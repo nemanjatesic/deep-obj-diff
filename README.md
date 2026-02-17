@@ -4,8 +4,9 @@ A **zero-dependency**, fully typed deep object diffing library for JavaScript/Ty
 
 ## Features
 
-- **Zero dependencies** – no runtime dependencies at all
+- **Zero dependencies** – no runtime dependencies for the core library
 - **Fully typed** – written in TypeScript with rich generic types
+- **CLI included** – compare JSON files or inline strings from the terminal
 - **Multiple output formats** – list, flat, nested, JSON Patch, or custom
 - **Customizable** – filters, custom equality, depth limits, array ordering
 - **Convenience helpers** – `hasDiff`, `addedDiff`, `removedDiff`, `changedDiff`
@@ -185,6 +186,63 @@ npm test             # Run tests with coverage
 npm run lint         # Type check
 npm run build        # Build to dist/
 ```
+
+## CLI
+
+The package ships with a CLI for comparing JSON objects directly from the terminal.
+
+### Install globally
+
+```bash
+npm install -g deep-obj-diff
+```
+
+### Usage
+
+```bash
+# Compare two JSON files
+deep-obj-diff old.json new.json
+
+# Compare inline JSON strings
+deep-obj-diff '{"a":1,"b":2}' '{"a":1,"b":3,"c":4}'
+
+# Choose output format: list (default), flat, nested, patch, json
+deep-obj-diff old.json new.json --format patch
+
+# Include unchanged properties
+deep-obj-diff old.json new.json -u
+
+# Limit recursion depth
+deep-obj-diff old.json new.json -d 2
+
+# Filter by path prefix
+deep-obj-diff old.json new.json --filter settings
+
+# Treat arrays as unordered sets
+deep-obj-diff old.json new.json --no-array-order
+
+# Raw JSON output (no colors, pipe-friendly)
+deep-obj-diff old.json new.json --json
+deep-obj-diff old.json new.json --format patch --json
+```
+
+### Options
+
+| Flag | Alias | Description |
+|------|-------|-------------|
+| `--format <fmt>` | `-f` | Output format: `list`, `flat`, `nested`, `patch`, `json` |
+| `--include-unchanged` | `-u` | Include unchanged properties |
+| `--max-depth <n>` | `-d` | Maximum recursion depth |
+| `--no-array-order` | | Treat arrays as unordered sets |
+| `--filter <prefix>` | | Only include paths matching the prefix |
+| `--json` | | Force raw JSON output (no colors) |
+| `--version` | `-V` | Show version number |
+| `--help` | `-h` | Show help |
+
+### Exit codes
+
+- **0** – no differences found
+- **1** – differences found (useful for CI scripts)
 
 ## License
 
