@@ -30,6 +30,11 @@ import { toList, toFlat, toNested, toPatch } from './formatters';
  * // ]
  * ```
  */
+export function diff(lhs: unknown, rhs: unknown, options?: DiffOptions<'list'>): DiffChange[];
+export function diff(lhs: unknown, rhs: unknown, options: DiffOptions<'flat'>): import('./types').FlatDiff;
+export function diff(lhs: unknown, rhs: unknown, options: DiffOptions<'nested'>): import('./types').NestedDiff;
+export function diff(lhs: unknown, rhs: unknown, options: DiffOptions<'patch'>): import('./types').PatchOperation[];
+export function diff<R>(lhs: unknown, rhs: unknown, options: DiffOptions<CustomFormatter<R>>): R;
 export function diff<F extends OutputFormat | CustomFormatter = 'list'>(
   lhs: unknown,
   rhs: unknown,
