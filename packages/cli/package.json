@@ -1,0 +1,40 @@
+{
+  "name": "deep-obj-diff-cli",
+  "version": "0.3.0",
+  "description": "CLI for deep-obj-diff — compare two JSON objects or files from the command line",
+  "bin": {
+    "deep-obj-diff": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "test": "npx jest",
+    "lint": "tsc --noEmit",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "keywords": [
+    "deep",
+    "diff",
+    "object",
+    "compare",
+    "cli",
+    "json",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemanjatesic/deep-obj-diff.git",
+    "directory": "packages/cli"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "commander": "^14.0.3",
+    "deep-obj-diff": "^0.3.0"
+  }
+}

@@ -2,7 +2,7 @@ import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const CLI = path.resolve(__dirname, '..', 'dist', 'cli', 'index.js');
+const CLI = path.resolve(__dirname, '..', 'dist', 'index.js');
 
 function run(args: string[]): { stdout: string; exitCode: number } {
   try {

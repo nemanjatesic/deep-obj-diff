@@ -5,6 +5,8 @@
     "lib": ["ES2020"],
     "declaration": true,
     "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -17,9 +19,6 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["jest", "node"]
   },
-  "references": [
-    { "path": "packages/core" },
-    { "path": "packages/cli" }
-  ],
-  "files": []
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -5,7 +5,7 @@ import {
   NestedDiff,
   NestedDiffNode,
   PatchOperation,
-} from './types';
+} from './types.js';
 
 // ─── List (identity) ────────────────────────────────────────────────────────
 

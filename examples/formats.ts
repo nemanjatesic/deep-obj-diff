@@ -3,7 +3,7 @@
  *
  * Run: npx ts-node examples/formats.ts
  */
-import { diff, DiffChange, FlatDiff, NestedDiff, PatchOperation } from '../src';
+import { diff, DiffChange, FlatDiff, NestedDiff, PatchOperation } from 'deep-obj-diff';
 
 const lhs = {
   user: { name: 'Alice', age: 30 },

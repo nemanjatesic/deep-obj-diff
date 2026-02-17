@@ -4,10 +4,10 @@ import {
   DiffResult,
   OutputFormat,
   CustomFormatter,
-} from './types';
-import { collectChanges } from './engine';
-import { toList, toFlat, toNested, toPatch } from './formatters';
-import { expandJsonStrings } from './utils';
+} from './types.js';
+import { collectChanges } from './engine.js';
+import { toList, toFlat, toNested, toPatch } from './formatters.js';
+import { expandJsonStrings } from './utils.js';
 
 /**
  * Deeply compare two objects and return the differences.

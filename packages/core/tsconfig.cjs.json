@@ -4,9 +4,10 @@
     "module": "commonjs",
     "lib": ["ES2020"],
     "declaration": true,
+    "declarationDir": "./dist/types",
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./dist/cjs",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
@@ -20,5 +21,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

@@ -3,7 +3,7 @@
  *
  * Run: npx ts-node examples/advanced.ts
  */
-import { diff, DiffChange } from '../src';
+import { diff, DiffChange } from 'deep-obj-diff';
 
 // ─── 1. Path Filtering ──────────────────────────────────────────────────────
 

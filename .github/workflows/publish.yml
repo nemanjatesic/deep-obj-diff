@@ -21,7 +21,12 @@ jobs:
         with:
           registry-url: https://registry.npmjs.org
 
-      - name: Publish to npm
-        run: npm publish --provenance --access public
+      - name: Publish core to npm
+        run: npm publish --provenance --access public -w packages/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish CLI to npm
+        run: npm publish --provenance --access public -w packages/cli
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,5 +1,5 @@
-import { DiffChange, DiffKind, FlatDiff, PatchOperation } from '../types';
-import { COLORS, colorize, formatValue } from './colors';
+import { DiffChange, DiffKind, FlatDiff, PatchOperation } from 'deep-obj-diff';
+import { COLORS, colorize, formatValue } from './colors.js';
 
 // ─── JSON (raw) ──────────────────────────────────────────────────────────────
 

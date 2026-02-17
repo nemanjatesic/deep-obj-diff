@@ -25,14 +25,6 @@ runs:
       run: npm ci
       shell: bash
 
-    - name: Type check
-      run: npm run lint
-      shell: bash
-
-    - name: Build
-      run: npm run build
-      shell: bash
-
-    - name: Run tests
-      run: npm test
+    - name: Lint, Build & Test
+      run: npx turbo run lint test
       shell: bash

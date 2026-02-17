@@ -1,5 +1,5 @@
-import { DiffChange, DiffKind, DiffOptions } from './types';
-import { isPlainObject, isArray, isPrimitive, buildPath, allKeys, defaultIsEqual, shouldIgnorePath } from './utils';
+import { DiffChange, DiffKind, DiffOptions } from './types.js';
+import { isPlainObject, isArray, isPrimitive, buildPath, allKeys, defaultIsEqual, shouldIgnorePath } from './utils.js';
 
 /** Internal options type shared by collectChanges and diffArrays. */
 type EngineOptions = Required<Pick<DiffOptions, 'includeUnchanged' | 'maxDepth' | 'arrayOrderMatters'>> & {

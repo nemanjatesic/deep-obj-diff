@@ -1,17 +1,12 @@
 import { Command } from 'commander';
-import * as fs from 'fs';
-import * as path from 'path';
-import { diff } from '../diff';
-import { DiffKind } from '../types';
-import { CliOptions, VALID_FORMATS } from './types';
-import { resolveInput, exitWithError } from './input';
-import { printJson, printList, printFlat, printPatch } from './printers';
+import { diff, DiffKind } from 'deep-obj-diff';
+import { CliOptions, VALID_FORMATS } from './types.js';
+import { resolveInput, exitWithError } from './input.js';
+import { printJson, printList, printFlat, printPatch } from './printers.js';
 
-// ─── Read version from package.json ──────────────────────────────────────────
+// ─── Version injected at build time by esbuild ──────────────────────────────
 
-const packageJson = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf-8'),
-);
+declare const __CLI_VERSION__: string;
 
 // ─── Build the Commander program ─────────────────────────────────────────────
 
@@ -21,7 +16,7 @@ export function createProgram(): Command {
   program
     .name('deep-obj-diff')
     .description('Deep compare two JSON objects or files and display differences')
-    .version(packageJson.version as string)
+    .version(__CLI_VERSION__)
     .argument('<left>', 'Left (original) value — a JSON string or file path')
     .argument('<right>', 'Right (updated) value — a JSON string or file path')
     .option('-f, --format <format>', 'Output format: list, flat, nested, patch, json', 'list')
@@ -48,34 +43,21 @@ Examples:
     );
 
   program.action(handleAction);
-
   return program;
 }
-
-// ─── Action handler ──────────────────────────────────────────────────────────
 
 function handleAction(leftArg: string, rightArg: string, opts: CliOptions): void {
   const lhs = resolveInput(leftArg);
   const rhs = resolveInput(rightArg);
 
-  // Validate format
-  if (!VALID_FORMATS.includes(opts.format as any)) {
-    exitWithError(
-      `Invalid format "${opts.format}". Choose from: ${VALID_FORMATS.join(', ')}`,
-    );
-  }
+  if (!VALID_FORMATS.includes(opts.format as any))
+    exitWithError(`Invalid format "${opts.format}". Choose from: ${VALID_FORMATS.join(', ')}`);
 
-  // Parse max-depth
-  const maxDepth =
-    opts.maxDepth !== undefined ? parseInt(opts.maxDepth, 10) : Infinity;
-  if (opts.maxDepth !== undefined && isNaN(maxDepth)) {
+  const maxDepth = opts.maxDepth !== undefined ? parseInt(opts.maxDepth, 10) : Infinity;
+  if (opts.maxDepth !== undefined && isNaN(maxDepth))
     exitWithError(`--max-depth must be a number, got "${opts.maxDepth}"`);
-  }
 
-  // Build shared diff options
-  const filterFn = opts.filter
-    ? (p: string) => p === '' || p.startsWith(opts.filter!)
-    : undefined;
+  const filterFn = opts.filter ? (p: string) => p === '' || p.startsWith(opts.filter!) : undefined;
 
   const baseOpts = {
     includeUnchanged: opts.includeUnchanged,
@@ -89,12 +71,10 @@ function handleAction(leftArg: string, rightArg: string, opts: CliOptions): void
   const fmt = opts.format === 'json' ? 'list' : opts.format;
   const forceJson = opts.json || opts.format === 'json';
 
-  // Dispatch per format so TypeScript resolves the correct overload
   switch (fmt) {
     case 'flat': {
       const result = diff(lhs, rhs, { ...baseOpts, format: 'flat' as const });
-      if (forceJson) printJson(result);
-      else printFlat(result);
+      if (forceJson) printJson(result); else printFlat(result);
       break;
     }
     case 'nested': {
@@ -104,17 +84,13 @@ function handleAction(leftArg: string, rightArg: string, opts: CliOptions): void
     }
     case 'patch': {
       const result = diff(lhs, rhs, { ...baseOpts, format: 'patch' as const });
-      if (forceJson) printJson(result);
-      else printPatch(result);
+      if (forceJson) printJson(result); else printPatch(result);
       break;
     }
     case 'list':
     default: {
       const result = diff(lhs, rhs, { ...baseOpts, format: 'list' as const });
-      if (forceJson) printJson(result);
-      else printList(result);
-
-      // Exit with code 1 if differences found (useful for CI scripts)
+      if (forceJson) printJson(result); else printList(result);
       const hasDifferences = result.some((c) => c.kind !== DiffKind.Unchanged);
       if (hasDifferences) process.exit(1);
       break;

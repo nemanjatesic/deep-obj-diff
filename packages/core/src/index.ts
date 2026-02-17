@@ -1,5 +1,5 @@
-export { diff, hasDiff, addedDiff, removedDiff, changedDiff } from './diff';
-export { expandJsonStrings } from './utils';
+export { diff, hasDiff, addedDiff, removedDiff, changedDiff } from './diff.js';
+export { expandJsonStrings } from './utils.js';
 export {
   DiffKind,
   DiffChange,
@@ -13,4 +13,4 @@ export {
   PathFilter,
   EqualityFn,
   CustomFormatter,
-} from './types';
+} from './types.js';

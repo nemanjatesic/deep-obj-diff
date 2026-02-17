@@ -25,8 +25,10 @@ jobs:
 
       - name: Verify dist output exists
         run: |
-          test -f dist/index.js
-          test -f dist/index.d.ts
+          test -f packages/core/dist/cjs/index.js
+          test -f packages/core/dist/esm/index.js
+          test -f packages/core/dist/types/index.d.ts
+          test -f packages/cli/dist/index.js
 
   publish-dry-run:
     needs: build-and-test
@@ -40,5 +42,8 @@ jobs:
       - name: Setup, Build & Test
         uses: ./.github/actions/setup-build-test
 
-      - name: Pack (dry run)
-        run: npm pack --dry-run
+      - name: Pack core (dry run)
+        run: npm pack --dry-run -w packages/core
+
+      - name: Pack CLI (dry run)
+        run: npm pack --dry-run -w packages/cli

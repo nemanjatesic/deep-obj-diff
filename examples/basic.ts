@@ -3,7 +3,7 @@
  *
  * Run: npx ts-node examples/basic.ts
  */
-import { diff, hasDiff, addedDiff, removedDiff, changedDiff, DiffKind } from '../src';
+import { diff, hasDiff, addedDiff, removedDiff, changedDiff, DiffKind } from 'deep-obj-diff';
 
 // ─── 1. Simple object comparison ─────────────────────────────────────────────
 
