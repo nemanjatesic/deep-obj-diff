@@ -29,10 +29,10 @@ runs:
       run: npm run lint
       shell: bash
 
-    - name: Run tests
-      run: npm test
-      shell: bash
-
     - name: Build
       run: npm run build
+      shell: bash
+
+    - name: Run tests
+      run: npm test
       shell: bash
