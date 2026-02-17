@@ -48,6 +48,7 @@ export function diff<F extends OutputFormat | CustomFormatter = 'list'>(
     filter: options?.filter,
     isEqual: options?.isEqual,
     arrayOrderMatters: options?.arrayOrderMatters ?? true,
+    ignorePaths: options?.ignorePaths,
   };
 
   // Expand JSON-stringified string values before diffing

@@ -1,5 +1,17 @@
 import { DiffChange, DiffKind, DiffOptions } from './types';
-import { isPlainObject, isArray, isPrimitive, buildPath, allKeys, defaultIsEqual } from './utils';
+import { isPlainObject, isArray, isPrimitive, buildPath, allKeys, defaultIsEqual, shouldIgnorePath } from './utils';
+
+/** Internal options type shared by collectChanges and diffArrays. */
+type EngineOptions = Required<Pick<DiffOptions, 'includeUnchanged' | 'maxDepth' | 'arrayOrderMatters'>> & {
+  filter?: DiffOptions['filter'];
+  isEqual?: DiffOptions['isEqual'];
+  ignorePaths?: DiffOptions['ignorePaths'];
+};
+
+/** Returns true if the path should be suppressed by ignorePaths. */
+function isIgnored(path: string, options: EngineOptions): boolean {
+  return !!(path && options.ignorePaths && options.ignorePaths.length > 0 && shouldIgnorePath(path, options.ignorePaths));
+}
 
 /**
  * Internal recursive diff collector.
@@ -10,10 +22,7 @@ export function collectChanges(
   lhs: unknown,
   rhs: unknown,
   path: string,
-  options: Required<Pick<DiffOptions, 'includeUnchanged' | 'maxDepth' | 'arrayOrderMatters'>> & {
-    filter?: DiffOptions['filter'];
-    isEqual?: DiffOptions['isEqual'];
-  },
+  options: EngineOptions,
   depth: number,
   out: DiffChange[],
 ): void {
@@ -21,6 +30,11 @@ export function collectChanges(
 
   // ── Filter check ────────────────────────────────────────────────────
   if (options.filter && !options.filter(path, lhs, rhs)) {
+    return;
+  }
+
+  // ── Ignore paths check ──────────────────────────────────────────────
+  if (isIgnored(path, options)) {
     return;
   }
 
@@ -81,11 +95,11 @@ export function collectChanges(
       const rVal = rhs[key];
 
       if (!(key in lhs)) {
-        if (!options.filter || options.filter(childPath, undefined, rVal)) {
+        if ((!options.filter || options.filter(childPath, undefined, rVal)) && !isIgnored(childPath, options)) {
           out.push({ kind: DiffKind.Added, path: childPath, rhs: rVal });
         }
       } else if (!(key in rhs)) {
-        if (!options.filter || options.filter(childPath, lVal, undefined)) {
+        if ((!options.filter || options.filter(childPath, lVal, undefined)) && !isIgnored(childPath, options)) {
           out.push({ kind: DiffKind.Removed, path: childPath, lhs: lVal });
         }
       } else {
@@ -136,10 +150,7 @@ function diffArrays(
   lhs: unknown[],
   rhs: unknown[],
   path: string,
-  options: Required<Pick<DiffOptions, 'includeUnchanged' | 'maxDepth' | 'arrayOrderMatters'>> & {
-    filter?: DiffOptions['filter'];
-    isEqual?: DiffOptions['isEqual'];
-  },
+  options: EngineOptions,
   depth: number,
   out: DiffChange[],
 ): void {
@@ -149,11 +160,11 @@ function diffArrays(
     for (let i = 0; i < maxLen; i++) {
       const childPath = buildPath(path, i);
       if (i >= lhs.length) {
-        if (!options.filter || options.filter(childPath, undefined, rhs[i])) {
+        if ((!options.filter || options.filter(childPath, undefined, rhs[i])) && !isIgnored(childPath, options)) {
           out.push({ kind: DiffKind.Added, path: childPath, rhs: rhs[i] });
         }
       } else if (i >= rhs.length) {
-        if (!options.filter || options.filter(childPath, lhs[i], undefined)) {
+        if ((!options.filter || options.filter(childPath, lhs[i], undefined)) && !isIgnored(childPath, options)) {
           out.push({ kind: DiffKind.Removed, path: childPath, lhs: lhs[i] });
         }
       } else {
@@ -184,7 +195,7 @@ function diffArrays(
       }
 
       if (!matched) {
-        if (!options.filter || options.filter(childPath, lhs[i], undefined)) {
+        if ((!options.filter || options.filter(childPath, lhs[i], undefined)) && !isIgnored(childPath, options)) {
           out.push({ kind: DiffKind.Removed, path: childPath, lhs: lhs[i] });
         }
       }
@@ -194,7 +205,7 @@ function diffArrays(
     for (let j = 0; j < rhs.length; j++) {
       if (rhsMatched.has(j)) continue;
       const childPath = buildPath(path, j);
-      if (!options.filter || options.filter(childPath, undefined, rhs[j])) {
+      if ((!options.filter || options.filter(childPath, undefined, rhs[j])) && !isIgnored(childPath, options)) {
         out.push({ kind: DiffKind.Added, path: childPath, rhs: rhs[j] });
       }
     }

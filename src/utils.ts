@@ -53,6 +53,47 @@ export function defaultIsEqual(a: unknown, b: unknown): boolean {
 }
 
 /**
+ * Check whether a dot-notation path matches an ignore pattern.
+ *
+ * Pattern rules:
+ * - `"foo.bar"` — exact match
+ * - `"*.type"` — matches any path ending with `.type` (e.g. `"a.type"`, `"x.y.type"`)
+ * - `"settings.*"` — matches any path starting with `"settings."` (e.g. `"settings.theme"`)
+ * - `"**.id"` — matches any path containing `.id` or equal to `"id"` at any depth
+ */
+export function matchesIgnorePattern(path: string, pattern: string): boolean {
+  // Exact match
+  if (path === pattern) return true;
+
+  // "**.segment" — any depth wildcard: matches paths ending with the segment
+  if (pattern.startsWith('**.')) {
+    const suffix = pattern.slice(3); // after "**."
+    return path === suffix || path.endsWith(`.${suffix}`);
+  }
+
+  // "*.segment" — single-level wildcard on the left
+  if (pattern.startsWith('*.')) {
+    const suffix = pattern.slice(1); // includes the leading dot: ".type"
+    return path.endsWith(suffix);
+  }
+
+  // "prefix.*" — wildcard on the right
+  if (pattern.endsWith('.*')) {
+    const prefix = pattern.slice(0, -2); // before ".*"
+    return path.startsWith(`${prefix}.`) || path.startsWith(`${prefix}[`);
+  }
+
+  return false;
+}
+
+/**
+ * Check whether a path should be ignored based on an array of ignore patterns.
+ */
+export function shouldIgnorePath(path: string, ignorePaths: string[]): boolean {
+  return ignorePaths.some((pattern) => matchesIgnorePattern(path, pattern));
+}
+
+/**
  * Recursively walk a value and expand any string properties that
  * contain valid JSON (objects or arrays) into their parsed form.
  *

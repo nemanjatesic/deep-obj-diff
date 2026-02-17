@@ -7,6 +7,7 @@ export interface CliOptions {
   filter?: string;
   json: boolean;
   expandJsonStrings: boolean;
+  ignore: string[];
 }
 
 /** Valid output format names accepted by the CLI. */

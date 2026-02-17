@@ -31,6 +31,7 @@ export function createProgram(): Command {
     .option('--filter <pattern>', 'Only include paths matching this prefix (e.g. "settings")')
     .option('--json', 'Force raw JSON output (no colors, no pretty printing)', false)
     .option('-e, --expand-json-strings', 'Recursively expand JSON-stringified string values before diffing', false)
+    .option('-i, --ignore <pattern...>', 'Ignore paths matching pattern (repeatable). Use "*.key" for suffix, "prefix.*" for prefix, "**.key" for any depth')
     .addHelpText(
       'after',
       `
@@ -42,6 +43,7 @@ Examples:
   $ deep-obj-diff old.json new.json --filter settings
   $ deep-obj-diff old.json new.json --no-array-order
   $ deep-obj-diff old.json new.json -u -d 2
+  $ deep-obj-diff old.json new.json -i "*.type" -i "metadata.timestamp"
 `,
     );
 
@@ -81,6 +83,7 @@ function handleAction(leftArg: string, rightArg: string, opts: CliOptions): void
     arrayOrderMatters: opts.arrayOrder,
     filter: filterFn,
     expandJsonStrings: opts.expandJsonStrings,
+    ignorePaths: opts.ignore,
   };
 
   const fmt = opts.format === 'json' ? 'list' : opts.format;

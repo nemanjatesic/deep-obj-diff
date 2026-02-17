@@ -117,6 +117,23 @@ export interface DiffOptions<F extends OutputFormat | CustomFormatter = 'list'> 
   arrayOrderMatters?: boolean;
 
   /**
+   * An array of path patterns to ignore during diffing.
+   * Matching paths (and their children) are silently skipped.
+   *
+   * Pattern rules:
+   * - `"foo.bar"` — exact match
+   * - `"*.type"` — matches any path ending with `.type`
+   * - `"settings.*"` — matches any path starting with `settings.`
+   * - `"**.id"` — matches `.id` at any depth
+   *
+   * @example
+   * ```ts
+   * diff(a, b, { ignorePaths: ['*.type', 'metadata.timestamp'] });
+   * ```
+   */
+  ignorePaths?: string[];
+
+  /**
    * When `true`, string values that contain valid JSON (objects or arrays)
    * are recursively parsed and expanded before diffing, so that their
    * inner structure is compared rather than the raw string.
