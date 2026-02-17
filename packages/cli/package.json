@@ -1,6 +1,6 @@
 {
   "name": "deep-obj-diff-cli",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "CLI for deep-obj-diff — compare two JSON objects or files from the command line",
   "bin": {
     "deep-obj-diff": "dist/index.js"
@@ -35,6 +35,6 @@
   },
   "devDependencies": {
     "commander": "^14.0.3",
-    "deep-obj-diff": "^0.3.0"
+    "deep-obj-diff": "^1.0.0"
   }
 }
