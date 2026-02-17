@@ -38,7 +38,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/deep-obj-diff.git"
+    "url": "git+https://github.com/nemanjatesic/deep-obj-diff.git"
   },
   "engines": {
     "node": ">=18.0.0"
