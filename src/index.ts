@@ -1,4 +1,5 @@
 export { diff, hasDiff, addedDiff, removedDiff, changedDiff } from './diff';
+export { expandJsonStrings } from './utils';
 export {
   DiffKind,
   DiffChange,

@@ -115,6 +115,14 @@ export interface DiffOptions<F extends OutputFormat | CustomFormatter = 'list'> 
    * @default true
    */
   arrayOrderMatters?: boolean;
+
+  /**
+   * When `true`, string values that contain valid JSON (objects or arrays)
+   * are recursively parsed and expanded before diffing, so that their
+   * inner structure is compared rather than the raw string.
+   * @default false
+   */
+  expandJsonStrings?: boolean;
 }
 
 // ─── Result Type Mapping ─────────────────────────────────────────────────────

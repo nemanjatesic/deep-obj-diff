@@ -7,6 +7,7 @@ import {
 } from './types';
 import { collectChanges } from './engine';
 import { toList, toFlat, toNested, toPatch } from './formatters';
+import { expandJsonStrings } from './utils';
 
 /**
  * Deeply compare two objects and return the differences.
@@ -49,8 +50,12 @@ export function diff<F extends OutputFormat | CustomFormatter = 'list'>(
     arrayOrderMatters: options?.arrayOrderMatters ?? true,
   };
 
+  // Expand JSON-stringified string values before diffing
+  const left = options?.expandJsonStrings ? expandJsonStrings(lhs) : lhs;
+  const right = options?.expandJsonStrings ? expandJsonStrings(rhs) : rhs;
+
   const changes: DiffChange[] = [];
-  collectChanges(lhs, rhs, '', opts, 0, changes);
+  collectChanges(left, right, '', opts, 0, changes);
 
   return formatOutput(changes, opts.format);
 }

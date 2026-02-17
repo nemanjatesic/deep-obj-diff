@@ -51,3 +51,44 @@ export function allKeys(
 export function defaultIsEqual(a: unknown, b: unknown): boolean {
   return Object.is(a, b);
 }
+
+/**
+ * Recursively walk a value and expand any string properties that
+ * contain valid JSON (objects or arrays) into their parsed form.
+ *
+ * @example
+ * ```ts
+ * expandJsonStrings({ data: '{"name":"Alice"}' })
+ * // => { data: { name: 'Alice' } }
+ * ```
+ */
+export function expandJsonStrings(value: unknown): unknown {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (
+      (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+      (trimmed.startsWith('[') && trimmed.endsWith(']'))
+    ) {
+      try {
+        return expandJsonStrings(JSON.parse(trimmed));
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(expandJsonStrings);
+  }
+
+  if (value !== null && typeof value === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const key of Object.keys(value as Record<string, unknown>)) {
+      result[key] = expandJsonStrings((value as Record<string, unknown>)[key]);
+    }
+    return result;
+  }
+
+  return value;
+}

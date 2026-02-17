@@ -30,6 +30,7 @@ export function createProgram(): Command {
     .option('--no-array-order', 'Treat arrays as unordered sets')
     .option('--filter <pattern>', 'Only include paths matching this prefix (e.g. "settings")')
     .option('--json', 'Force raw JSON output (no colors, no pretty printing)', false)
+    .option('-e, --expand-json-strings', 'Recursively expand JSON-stringified string values before diffing', false)
     .addHelpText(
       'after',
       `
@@ -79,6 +80,7 @@ function handleAction(leftArg: string, rightArg: string, opts: CliOptions): void
     maxDepth,
     arrayOrderMatters: opts.arrayOrder,
     filter: filterFn,
+    expandJsonStrings: opts.expandJsonStrings,
   };
 
   const fmt = opts.format === 'json' ? 'list' : opts.format;

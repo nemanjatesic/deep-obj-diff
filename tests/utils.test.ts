@@ -1,4 +1,4 @@
-import { isPlainObject, isArray, isPrimitive, buildPath, allKeys, defaultIsEqual } from '../src/utils';
+import { isPlainObject, isArray, isPrimitive, buildPath, allKeys, defaultIsEqual, expandJsonStrings } from '../src/utils';
 
 describe('isPlainObject', () => {
   it('returns true for plain objects', () => {
@@ -81,5 +81,54 @@ describe('defaultIsEqual', () => {
     expect(defaultIsEqual(+0, -0)).toBe(false);
     expect(defaultIsEqual(null, undefined)).toBe(false);
     expect(defaultIsEqual('a', 'a')).toBe(true);
+  });
+});
+
+describe('expandJsonStrings', () => {
+  it('expands a stringified JSON object', () => {
+    const input = { data: '{"name":"Alice","age":30}' };
+    expect(expandJsonStrings(input)).toEqual({ data: { name: 'Alice', age: 30 } });
+  });
+
+  it('expands a stringified JSON array', () => {
+    const input = { items: '[1,2,3]' };
+    expect(expandJsonStrings(input)).toEqual({ items: [1, 2, 3] });
+  });
+
+  it('recursively expands nested stringified JSON', () => {
+    const input = { outer: '{"inner":"{\\"deep\\":true}"}' };
+    expect(expandJsonStrings(input)).toEqual({ outer: { inner: { deep: true } } });
+  });
+
+  it('leaves non-JSON strings untouched', () => {
+    const input = { name: 'Alice', greeting: 'hello world' };
+    expect(expandJsonStrings(input)).toEqual({ name: 'Alice', greeting: 'hello world' });
+  });
+
+  it('leaves invalid JSON-like strings untouched', () => {
+    const input = { bad: '{not valid json}' };
+    expect(expandJsonStrings(input)).toEqual({ bad: '{not valid json}' });
+  });
+
+  it('handles arrays at root level', () => {
+    const input = ['{"a":1}', 'plain', '[1,2]'];
+    expect(expandJsonStrings(input)).toEqual([{ a: 1 }, 'plain', [1, 2]]);
+  });
+
+  it('passes through primitives unchanged', () => {
+    expect(expandJsonStrings(42)).toBe(42);
+    expect(expandJsonStrings(null)).toBe(null);
+    expect(expandJsonStrings(true)).toBe(true);
+    expect(expandJsonStrings(undefined)).toBe(undefined);
+  });
+
+  it('works with the diff option', () => {
+    const { diff } = require('../src/diff');
+    const lhs = { data: '{"name":"Alice","age":30}' };
+    const rhs = { data: '{"name":"Bob","age":30}' };
+    const result = diff(lhs, rhs, { expandJsonStrings: true });
+    expect(result).toEqual([
+      expect.objectContaining({ kind: 'changed', path: 'data.name', lhs: 'Alice', rhs: 'Bob' }),
+    ]);
   });
 });
