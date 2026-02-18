@@ -23,11 +23,9 @@ jobs:
 
       - name: Setup, Build & Test
         uses: ./.github/actions/setup-build-test
-        with:
-          registry-url: https://registry.npmjs.org
 
       - name: Publish core to npm
-        run: npm publish --provenance --access public -w packages/core
+        run: npm publish --access public -w packages/core
 
       - name: Publish CLI to npm
-        run: npm publish --provenance --access public -w packages/cli
+        run: npm publish --access public -w packages/cli
