@@ -16,13 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup, Build & Test
+        uses: ./.github/actions/setup-build-test
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup, Build & Test
-        uses: ./.github/actions/setup-build-test
 
       - name: Publish core to npm
         run: npm publish --access public -w packages/core
